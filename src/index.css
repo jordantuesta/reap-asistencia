@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/*
+  Identidad visual PROVISIONAL de REAP Asistencia.
+  Cuando REAP entregue su logo/colores, solo hay que cambiar estos tokens.
+  - acero: solidez, industria, confianza (base)
+  - ambar: señalética de seguridad en obra (acento)
+*/
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-acero-50: #EEF4FA;
+  --color-acero-100: #D9E6F2;
+  --color-acero-200: #B4CCE3;
+  --color-acero-300: #84A9CD;
+  --color-acero-400: #5584B3;
+  --color-acero-500: #3B6A99;
+  --color-acero-600: #2A5580;
+  --color-acero-700: #1E4A75;
+  --color-acero-800: #16385A;
+  --color-acero-900: #0F2A44;
+  --color-acero-950: #0B1A2B;
+
+  --color-ambar-50: #FFF8EB;
+  --color-ambar-100: #FEEBC8;
+  --color-ambar-200: #FDD58C;
+  --color-ambar-300: #FBBF4F;
+  --color-ambar-400: #F7B03A;
+  --color-ambar-500: #F5A524;
+  --color-ambar-600: #D9860B;
+  --color-ambar-700: #B4670A;
+
+  --color-tinta: #0E1B2A;
+  --color-papel: #F4F6F9;
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--color-papel);
+  color: var(--color-tinta);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* Fondo de marca para pantallas de bienvenida */
+.fondo-marca {
+  background:
+    radial-gradient(1200px 600px at 110% -10%, rgba(245,165,36,0.18), transparent 60%),
+    radial-gradient(900px 500px at -20% 110%, rgba(59,106,153,0.35), transparent 60%),
+    linear-gradient(160deg, #0F2A44 0%, #0B1A2B 100%);
+}
+
+/* Patrón sutil de "pozo de ascensor" (rieles) */
+.rieles {
+  background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 56px);
+}
+
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+/* Botón de marcación: pulso suave */
+@keyframes pulso {
+  0% { box-shadow: 0 0 0 0 rgba(245,165,36,0.45); }
+  70% { box-shadow: 0 0 0 22px rgba(245,165,36,0); }
+  100% { box-shadow: 0 0 0 0 rgba(245,165,36,0); }
+}
+.pulso { animation: pulso 2.2s infinite; }
+
+@keyframes entrar { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.entrar { animation: entrar .28s ease-out both; }
+
+@keyframes girar { to { transform: rotate(360deg); } }
+.girar { animation: girar 1s linear infinite; }
+
+/* Leaflet dentro de tarjetas redondeadas */
+.leaflet-container { font-family: var(--font-sans); border-radius: inherit; z-index: 0; }
+.leaflet-div-icon { background: transparent; border: 0; }
+
+/* Impresión de documentos (adendas, reportes) */
+@media print {
+  body * { visibility: hidden !important; }
+  .imprimible, .imprimible * { visibility: visible !important; }
+  .imprimible { position: absolute; inset: 0; margin: 0; box-shadow: none !important; border: 0 !important; }
+  .no-imprimir { display: none !important; }
+}
+
+/* Barras de desplazamiento discretas en el panel */
+.scroll-fino::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-fino::-webkit-scrollbar-thumb { background: #c9d3de; border-radius: 8px; }
