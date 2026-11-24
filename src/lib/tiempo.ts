@@ -119,6 +119,17 @@ export function saludo(d = new Date()): string {
   return 'Buenas noches';
 }
 
+/** Primera letra en mayúscula. */
+export function mayus(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/** 815 -> "13.6 h" */
+export function horasCortas(min: number): string {
+  const h = Math.round((min / 60) * 10) / 10;
+  return `${h % 1 === 0 ? h.toFixed(0) : h.toFixed(1)} h`;
+}
+
 /** "hace 5 min", "hace 2 h", o la fecha. */
 export function hace(iso: string, ahora = Date.now()): string {
   const s = Math.max(0, (ahora - Date.parse(iso)) / 1000);

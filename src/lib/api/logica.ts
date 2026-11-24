@@ -2,7 +2,7 @@
 // En modo Supabase estas mismas reglas corren en la base de datos (supabase/schema.sql → app_marcar, etc.).
 
 import type { Adenda, Alerta, Marcacion, ResultadoMarca, Snapshot, SolicitudMarca, TipoAlerta } from '../types';
-import { NOMBRE_MARCA } from '../types';
+import { NOMBRE_MARCA, marcaConArticulo } from '../types';
 import { distanciaM } from '../geo';
 import { siguienteMarca } from '../horas';
 import { fechaLima, horaLima } from '../tiempo';
@@ -51,7 +51,7 @@ export function procesarMarca(db: BaseLocal, req: SolicitudMarca): { res: Result
   if (sim < cfg.umbral_similitud) {
     alertas.push(nuevaAlerta(db, {
       ...base, tipo: 'rostro_no_coincide', similitud: sim,
-      detalle: `Se intentó registrar ${tipo ? 'la ' + NOMBRE_MARCA[tipo].toUpperCase() : 'una marca'} con un rostro distinto al registrado (similitud ${Math.round(sim * 100)}%).`,
+      detalle: `Se intentó registrar ${tipo ? marcaConArticulo(tipo) : 'una marca'} con un rostro distinto al registrado (similitud ${Math.round(sim * 100)}%).`,
     }));
     return { res: { ok: false, motivo: 'rostro_no_coincide', similitud: sim, mensaje: 'El rostro no coincide con el trabajador registrado. Este intento quedó registrado.' }, alertas };
   }
@@ -67,7 +67,7 @@ export function procesarMarca(db: BaseLocal, req: SolicitudMarca): { res: Result
   const obs: string[] = [];
   if (dentro === false) {
     obs.push('Marcó fuera del radio de la obra');
-    alertas.push(nuevaAlerta(db, { ...base, tipo: 'fuera_de_obra', similitud: sim, detalle: `Marcó la ${NOMBRE_MARCA[tipo].toUpperCase()} a ${dist! >= 1000 ? (dist! / 1000).toFixed(1) + ' km' : dist + ' m'} de ${obra?.nombre}.` }));
+    alertas.push(nuevaAlerta(db, { ...base, tipo: 'fuera_de_obra', similitud: sim, detalle: `Marcó ${marcaConArticulo(tipo)} a ${dist! >= 1000 ? (dist! / 1000).toFixed(1) + ' km' : dist + ' m'} de ${obra?.nombre}.` }));
   }
   if (!u) obs.push('Sin ubicación al tomar la foto');
   const dispDistinto = !!t.dispositivo_id && t.dispositivo_id !== req.dispositivo_id;

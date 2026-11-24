@@ -104,7 +104,9 @@ export function crearApiSupabase(url: string, clave: string): Api {
     },
 
     async perfil(empresaId, dni) {
-      return (await rpc<PerfilTrabajador | null>('app_perfil', { p_empresa: empresaId, p_dni: dni.trim() })) || null;
+      const p = await rpc<PerfilTrabajador | null>('app_perfil', { p_empresa: empresaId, p_dni: dni.trim() });
+      if (!p) return null;
+      return { ...p, config: { ...CONFIG_INICIAL, ...(p.config || {}) } };
     },
 
     async enrolar(trabajadorId, codigo, captura, dispositivoId) {
@@ -208,6 +210,10 @@ export function crearApiSupabase(url: string, clave: string): Api {
       const nuevo = !t.id;
       const fila = { ...resto, id: t.id || uuid(), demo: nuevo ? false : t.demo };
       if (nuevo) Object.assign(fila, { codigo_alta: codigoAlta(), foto_enrolamiento: null, enrolado_at: null, consentimiento_at: null, dispositivo_id: null });
+      else {
+        // No pisar datos del registro facial que pudieron cambiar desde el celular
+        for (const k of ['codigo_alta', 'foto_enrolamiento', 'enrolado_at', 'consentimiento_at', 'dispositivo_id'] as const) delete (fila as Partial<typeof fila>)[k];
+      }
       const { tiene_rostro, ...sinGenerada } = fila as typeof fila & { tiene_rostro?: boolean };
       const { data, error } = await sb.from('trabajadores').upsert(sinGenerada).select(COLUMNAS_TRABAJADOR).single();
       if (error) throw error;
@@ -281,7 +287,10 @@ export function crearApiSupabase(url: string, clave: string): Api {
       await lotes('adendas', d.adendas.filter((a) => idsContrato.has(a.contrato_id)));
       await lotes('marcaciones', d.marcaciones);
       await lotes('alertas', d.alertas);
-      await lotes('aprobaciones', d.aprobaciones);
+      // Si RR. HH. ya aprobó/rechazó un día, se respeta su decisión
+      for (let i = 0; i < d.aprobaciones.length; i += 500) {
+        chk(await sb.from('aprobaciones').upsert(d.aprobaciones.slice(i, i + 500), { onConflict: 'trabajador_id,fecha', ignoreDuplicates: true }));
+      }
     },
 
     async urlFoto(ruta) {

@@ -197,6 +197,15 @@ export function generarDemo(ahora = new Date()): DatosDemo {
     { dia: 0, t: 2, tipo: 'suplantacion' },    // hoy
   ];
 
+  // Los incidentes se ubican en días hábiles (lun–vie) contados hacia atrás desde hoy.
+  const habiles: string[] = [];
+  for (let k = 0; habiles.length < 12; k++) {
+    const f = sumarDias(hoy, -k);
+    const w = diaSemana(f);
+    if (w >= 1 && w <= 5) habiles.push(f);
+  }
+  const fechaIncidente = (dia: number) => (dia === 0 ? hoy : habiles[habiles[0] === hoy ? -dia : -dia - 1]);
+
   for (let d = -21; d <= 0; d++) {
     const fecha = sumarDias(hoy, d);
     const dow = diaSemana(fecha);
@@ -223,8 +232,8 @@ export function generarDemo(ahora = new Date()): DatosDemo {
 
       for (const gi of grupo) {
         const t = trabajadores[gi];
-        if (rnd() < 0.05 && !esHoy) continue; // falta
-        const inc = incidentes.find((x) => x.dia === d && x.t === gi);
+        if (rnd() < 0.05 && !esHoy && !incidentes.some((x) => x.t === gi)) continue; // falta
+        const inc = incidentes.find((x) => fechaIncidente(x.dia) === fecha && x.t === gi && (x.dia !== 0 || esHoy));
         let entrada = llegada + (rnd() - 0.5) * 4;
         if (inc?.tipo === 'suplantacion') entrada = 512 + rnd() * 25; // en realidad llegó tarde
 

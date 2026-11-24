@@ -12,6 +12,11 @@ export const NOMBRE_MARCA: Record<TipoMarca, string> = {
   salida: 'Salida',
 };
 
+/** "la ENTRADA", "el REGRESO DE REFRIGERIO"… (para mensajes de alertas) */
+export function marcaConArticulo(t: TipoMarca): string {
+  return (t === 'regreso_refrigerio' ? 'el ' : 'la ') + NOMBRE_MARCA[t].toUpperCase();
+}
+
 export const NOMBRE_CORTO_MARCA: Record<TipoMarca, string> = {
   entrada: 'Entrada',
   salida_refrigerio: 'Sale a almorzar',

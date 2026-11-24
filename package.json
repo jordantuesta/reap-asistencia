@@ -6,7 +6,8 @@
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "iconos": "node scripts/iconos.mjs"
   },
   "keywords": [],
   "author": "",

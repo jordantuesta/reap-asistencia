@@ -6,7 +6,7 @@ import type { CapturaFacial, PerfilTrabajador, ResultadoMarca, TipoMarca, Ubicac
 import { NOMBRE_MARCA, SECUENCIA } from '../lib/types';
 import { distanciaM, ErrorUbicacion, obtenerUbicacion, seguirUbicacion, textoDistancia } from '../lib/geo';
 import { resumirDia, siguienteMarca } from '../lib/horas';
-import { duracion, fechaLarga, fechaLima, horaLima, horaSegLima, saludo } from '../lib/tiempo';
+import { duracion, fechaLarga, fechaLima, horaLima, horaSegLima, mayus, saludo } from '../lib/tiempo';
 import { idDispositivo, nombreCorto, pct } from '../lib/util';
 import { Boton, FotoEvidencia } from '../ui/comunes';
 import CamaraFacial from '../ui/CamaraFacial';
@@ -104,8 +104,8 @@ export default function Inicio({ perfil, recargar, irA }: { perfil: PerfilTrabaj
         <p className="mt-5 text-sm text-white/60">{saludo(ahora)},</p>
         <h1 className="text-2xl font-extrabold">{nombreCorto(t)}</h1>
         <div className="mt-3 flex items-end justify-between">
-          <p className="text-sm capitalize text-white/60">{fechaLarga(fechaLima(ahora))}</p>
-          <p className="font-mono text-3xl font-semibold tabular text-white">{horaSegLima(ahora)}</p>
+          <p className="text-sm text-white/60">{mayus(fechaLarga(fechaLima(ahora)))}</p>
+          <p className="text-3xl font-bold tracking-tight tabular text-white">{horaSegLima(ahora)}</p>
         </div>
       </header>
 
@@ -186,7 +186,7 @@ export default function Inicio({ perfil, recargar, irA }: { perfil: PerfilTrabaj
                     <p className={`text-sm font-semibold ${m ? 'text-acero-900' : 'text-acero-400'}`}>{NOMBRE_MARCA[tipo]}</p>
                     {m?.estado === 'observada' && <p className="text-[11px] font-medium text-ambar-600">{m.observaciones[0]}</p>}
                   </div>
-                  <p className={`font-mono text-sm font-semibold tabular ${m ? 'text-acero-900' : 'text-acero-300'}`}>{m ? horaLima(m.hora_marca) : esSiguiente ? 'pendiente' : '--:--'}</p>
+                  <p className={`text-sm font-bold tabular ${m ? 'text-acero-900' : 'text-acero-300'}`}>{m ? horaLima(m.hora_marca) : esSiguiente ? 'pendiente' : '--:--'}</p>
                 </li>
               );
             })}
