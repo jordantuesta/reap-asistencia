@@ -102,4 +102,20 @@ ok(c2.f === '2027-02-28', 'contrato prorrogado automáticamente');
 r = await rpc('app_perfil', { p_empresa: E, p_dni: '12345678' });
 ok(r.adendas.length === 1 && r.contrato && r.trabajador.tiene_rostro === true, 'perfil refleja contrato, adenda y rostro');
 
+// Permisos: el celular (anon) solo ve empresas y usa las funciones; el panel (authenticated) ve todo
+const comoRol = async (rol, consulta) => {
+  await db.exec(`set role ${rol}`);
+  try { return { filas: (await db.query(consulta)).rows }; } catch (e) { return { error: e.message }; } finally { await db.exec('reset role'); }
+};
+let q = await comoRol('anon', 'select id from trabajadores');
+ok(q.error && /permission denied/.test(q.error), 'anon NO puede leer trabajadores (plantillas biométricas)');
+q = await comoRol('anon', 'select id from marcaciones');
+ok(q.error && /permission denied/.test(q.error), 'anon NO puede leer marcaciones');
+q = await comoRol('anon', 'select id from empresas');
+ok(q.filas?.length === 2, 'anon puede listar las 2 empresas');
+q = await comoRol('anon', `select app_perfil('${E}', '12345678') r`);
+ok(q.filas?.[0]?.r?.trabajador?.nombres === 'Ana', 'anon puede usar app_perfil');
+q = await comoRol('authenticated', 'select id from trabajadores');
+ok(q.filas?.length === 1, 'panel (authenticated) puede leer trabajadores');
+
 console.log(process.exitCode ? '\nHAY ERRORES' : '\nTODO OK');

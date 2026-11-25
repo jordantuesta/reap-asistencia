@@ -444,6 +444,16 @@ grant execute on function public.app_ver_adenda(uuid, uuid) to anon, authenticat
 grant execute on function public.app_firmar_adenda(uuid, uuid, jsonb, double precision, double precision, boolean, text,
   double precision, double precision, text) to anon, authenticated;
 
+-- ---------------------------------------------------------------- Permisos de la API
+-- Explícitos, por si el proyecto se creó sin "exponer tablas nuevas automáticamente".
+-- El celular (anon) no toca las tablas directamente: solo lee empresas y llama a las funciones app_*.
+grant usage on schema public to anon, authenticated;
+revoke all on public.obras, public.trabajadores, public.contratos, public.adendas, public.marcaciones,
+  public.alertas, public.aprobaciones, public.configuracion from anon;
+grant select on public.empresas to anon;
+grant select, insert, update, delete on public.empresas, public.obras, public.trabajadores, public.contratos,
+  public.adendas, public.marcaciones, public.alertas, public.aprobaciones, public.configuracion to authenticated;
+
 -- ---------------------------------------------------------------- Seguridad (RLS)
 -- Celular (anon): solo puede leer la lista de empresas y llamar a las funciones app_*.
 -- Panel (usuarios creados en Authentication): acceso completo.
