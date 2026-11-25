@@ -53,6 +53,8 @@ Con la Project URL, la Publishable key y el enlace del repositorio:
    ```
    La primera vez se abre una ventana para iniciar sesión en GitHub.
 4. Pestaña **Actions** del repositorio: esperar el check verde (~2 min). El enlace aparece en *Settings → Pages*.
+   Si falla con *Failed to create deployment (status: 404)*, es que Pages no estaba activado: actívalo
+   (paso 2.2) y en la ejecución fallida pulsa **Re-run all jobs**.
 
 > Cada vez que se guarde un cambio con `git push`, el sitio se actualiza solo.
 
